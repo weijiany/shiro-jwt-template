@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.service.AccountService;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -11,6 +12,12 @@ import java.util.HashMap;
 
 @Configuration
 public class ShiroConfig {
+
+    private final AccountService accountService;
+
+    public ShiroConfig(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @Bean
     public ShiroFilterFactoryBean shiroFilter(DefaultWebSecurityManager securityManager) {
@@ -38,6 +45,6 @@ public class ShiroConfig {
 
     @Bean
     public Realm realm() {
-        return new MyRealm();
+        return new MyRealm(accountService);
     }
 }

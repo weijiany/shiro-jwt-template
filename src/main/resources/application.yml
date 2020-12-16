@@ -2,3 +2,8 @@ account:
   username: 1
   password: 1
   role: admin
+
+spring:
+  redis:
+    host: localhost
+    database: 0
