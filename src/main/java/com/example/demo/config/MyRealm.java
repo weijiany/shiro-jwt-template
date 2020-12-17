@@ -25,17 +25,17 @@ public class MyRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        JWTToken jwtToken = (JWTToken) token;
-        return new SimpleAuthenticationInfo(jwtToken.getPrincipal(), "", getName());
+        String jwtToken = token.getPrincipal().toString();
+        String username = JWT.decode(jwtToken).getClaim("username").asString();
+        if (!accountService.checkLoginAndExpireToken(username, jwtToken))
+            throw new UnAuthenticationException("un authentication");
+
+        return new SimpleAuthenticationInfo(jwtToken, "", getName());
     }
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String token = (String) SecurityUtils.getSubject().getPrincipal();
-        String username = JWT.decode(token).getClaim("username").asString();
-        if (!accountService.checkLoginAndExpireToken(username, token))
-            throw new UnAuthenticationException("un authentication");
-
         String role = JWT.decode(token).getClaim("role").asString();
         return new SimpleAuthorizationInfo(Collections.singleton(role));
     }
